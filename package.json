@@ -1,0 +1,23 @@
+{
+  "name": "cbend",
+  "version": "0.0.1",
+  "description": "A Node express db-driven api generator",
+  "main": "bin/cbend",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "express",
+    "api",
+    "automate"
+  ],
+  "dependencies": {
+    "await-to-js": "^2.0.1",
+    "commander": "2.7.1",
+    "mkdirp": "0.5.1",
+    "require": "^2.4.20",
+    "sorted-object": "1.0.0"
+  },
+  "author": "Connor Makhlouta <connormakhlouta@gmail.com>",
+  "license": "MIT"
+}
