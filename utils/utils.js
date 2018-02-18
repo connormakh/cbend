@@ -2,9 +2,9 @@ const fs = require('fs');
 
 module.exports = {
     write_route_from_template: (to, name) =>  {
-    let from = path.join(__dirname, '..', 'templates/js', 'route.js');
-    let data = fs.readFileSync(from, 'utf-8')
-    let result = data.replace(/string to be replaced/g, 'replacement');
+        let from = path.join(__dirname, '..', 'templates/js', 'route.js');
+        let data = fs.readFileSync(from, 'utf-8')
+        let result = data.replace(/string to be replaced/g, 'replacement');
 
 
     // module.exports.write(to, );
