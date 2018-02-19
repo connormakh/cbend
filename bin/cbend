@@ -55,8 +55,23 @@ function before(obj, method, fn) {
  * @param {String} path
  */
 
-function createApplication(app_name, path) {
-    let tables = prompt.prompt_for_tables()
+async function createApplication (app_name, path) {
+    // let tables = []
+    // let wants_to_add = false
+    // do {
+    //     wants_to_add = prompt.prompt_for_tables()
+    //
+    //     if(wants_to_add) {
+    //         let add_more_properties = false
+    //         let table = await prompt.ask_for_another_table()
+    //         await prompt.capture_all_properties()
+    //         tables.push(table)
+    //     }
+    // }
+    // while (wants_to_add)
+
+    prompt.capture_all_tables()
+    console.log(tables)
 }
 
 
@@ -102,7 +117,7 @@ async function main() {
     if (is_empty_dir || program.force) {
         createApplication(appName, destinationPath);
     } else {
-        let ok = await prompt.confirm('WARNING - destination is not empty, continue? [y/N] ')
+        let ok = prompt.confirm('WARNING - destination is not empty, continue? [y/N] ')
         if (ok) {
             process.stdin.destroy();
             createApplication(appName, destinationPath);
