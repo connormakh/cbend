@@ -5,6 +5,17 @@ const sortedObject = require('sorted-object');
 
 
 module.exports = {
+
+    create_project_directory: async(app_name, path) => {
+        const complete_path = path + app_name
+        await pv.mkdir(complete_path )
+
+        await Promise.all([
+            pv.mkdir(complete_path  + constants.routes_dir),
+            pv.mkdir(complete_path  + constants.objects_dir),
+            pv.mkdir(complete_path  + constants.models_dir),
+        ])
+    },
     /**
      *
      * @param options.path
@@ -13,17 +24,12 @@ module.exports = {
      * @returns {Promise.<void>}
      */
     create_project_structure: async (options) => {
-        await pv.mkdir(options.path)
 
         let app = pv.loadTemplate('js/app.js');
         let www = pv.loadTemplate('js/www');
         let route_data = pv.loadTemplate('js/routes/route.js');
 
-        await Promise.all([
-            pv.mkdir(options.path + constants.routes_dir),
-            pv.mkdir(options.path + constants.objects_dir),
-            pv.mkdir(options.path + constants.models_dir),
-        ])
+
 
         // package.json
         let pkg = {
@@ -72,8 +78,5 @@ const pv = {
     },
     loadTemplate: (name) => {
     return fs.readFileSync(path.join(__dirname, '..', 'templates', name), 'utf-8');
-    },
-
-
-
+    }
 }

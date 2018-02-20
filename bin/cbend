@@ -97,8 +97,6 @@ async function main() {
     // App name
     let appName = path.basename(path.resolve(destinationPath));
 
-    console.log(program.args.shift())
-
 
     // Generate application
     let is_empty_dir = await u_struct.check_for_empty_directory(destinationPath)

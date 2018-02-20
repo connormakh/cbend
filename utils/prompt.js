@@ -18,7 +18,6 @@ module.exports = {
             name: 'dialect',
             message: 'Choose dialect',
             choices: ['mysql', 'postgresql', 'mssql', 'mongoDB']
-
         }]
 
         return await inquirer.prompt(questions)
