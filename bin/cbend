@@ -57,11 +57,9 @@ function before(obj, method, fn) {
 
 async function createApplication (app_name, path) {
 
+    let dialect = await prompt.prompt_for_dialect()
     let tables = await prompt.capture_all_tables()
-    console.log(tables)
-
     let associations = await prompt.capture_all_associations(tables)
-    console.log(associations)
 }
 
 

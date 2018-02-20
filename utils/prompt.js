@@ -12,10 +12,17 @@ module.exports = {
         let input = readline.question(msg)
         return /^y|yes|ok|true$/i.test(input)
     },
-    prompt_for_tables:  () => {
-        return module.exports.confirm(constants.initialize_table_creation_prompt)
-    },
+    prompt_for_dialect: async () => {
+        let questions = [{
+            type: 'list',
+            name: 'dialect',
+            message: 'Choose dialect',
+            choices: ['mysql', 'postgresql', 'mssql', 'mongoDB']
 
+        }]
+
+        return await inquirer.prompt(questions)
+    },
 
     capture_all_tables: async() => {
         let confirm = false
@@ -137,6 +144,5 @@ const qs = {
             }
         ]
         return await inquirer.prompt(questions)
-
     }
 }
