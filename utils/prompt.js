@@ -1,8 +1,8 @@
-const os        = require('os')
-  ,   fs        = require('fs')
-  ,   path      = require('path')
-  ,   readline  = require('readline-sync')
-  ,   constants = require('./constants.json')
+const os         = require('os')
+  ,   fs         = require('fs')
+  ,   path       = require('path')
+  ,   readline   = require('readline-sync')
+  ,   constants  = require('./constants.json')
   ,   inquirer   = require('inquirer')
 
 
@@ -21,9 +21,10 @@ module.exports = {
         let confirm = false
         let tables = []
         do {
-            let table = await qs.ask_for_another_table()
-            let properties = await qs.capture_all_properties()
-            table.properties = properties
+            let table = {name: await qs.ask_for_another_table(), properties:await qs.capture_all_properties()}
+            // let properties =
+            // table.properties = properties
+            tables.push(table)
             let questions = [{
                 type: 'list',
                 name: 'confirmation',
@@ -33,6 +34,28 @@ module.exports = {
             let answer = await inquirer.prompt(questions)
             confirm = answer.confirmation === 'Yes'
         } while (confirm)
+
+        return tables
+    },
+    capture_all_associations: async (tables) => {
+
+        let confirm = false
+        let associations = []
+        do {
+            let association = await qs.ask_for_another_association(tables)
+            associations.push(association)
+            let question = [{
+                type: 'list',
+                name: 'confirmation',
+                message: 'Would you like to add another association?',
+                choices: ['Yes', 'No']
+            }]
+            let answer = await inquirer.prompt(question)
+            confirm = answer.confirmation == 'Yes'
+        }
+        while(confirm)
+
+        return associations
     }
 }
 
@@ -93,4 +116,27 @@ const qs = {
 
         return props
     },
+    ask_for_another_association: async(tables) => {
+
+        let questions = [
+            {
+                type: 'list',
+                name: 'parent',
+                message: 'Choose table that you want to add a child to',
+                choices: tables.map(item => {return item.name})
+            },{
+                type: 'list',
+                name: 'child',
+                message: 'Choose child',
+                choices: tables.map(item => {return item.name})
+            },{
+                type: 'list',
+                name: 'type',
+                message: 'Choose type of association',
+                choices: ['hasOne', 'hasMany', 'belongsTo']
+            }
+        ]
+        return await inquirer.prompt(questions)
+
+    }
 }
