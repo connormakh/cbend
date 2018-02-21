@@ -52,12 +52,12 @@ function before(obj, method, fn) {
 /**
  * Create application at the given directory `path`.
  *
- * @param {String} path
  */
 
-async function createApplication (app_name, path) {
+async function createApplication () {
 
-    let dialect = await prompt.prompt_for_dialect()
+    let app = await prompt.capture_app_details()
+    let db = await prompt.capture_db()
     let tables = await prompt.capture_all_tables()
     let associations = await prompt.capture_all_associations(tables)
 }
@@ -85,7 +85,6 @@ function exit(code) {
 
     done();
 }
-
 
 /**
  * Main program.

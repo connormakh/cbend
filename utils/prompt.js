@@ -12,17 +12,37 @@ module.exports = {
         let input = readline.question(msg)
         return /^y|yes|ok|true$/i.test(input)
     },
-    prompt_for_dialect: async () => {
-        let questions = [{
-            type: 'list',
-            name: 'dialect',
-            message: 'Choose dialect',
-            choices: ['mysql', 'postgresql', 'mssql', 'mongoDB']
-        }]
-
+    capture_app_details: async () => {
+      let questions = [
+          {
+              type: 'input',
+              name: 'app_name',
+              message: 'Enter Application name'
+          },
+          {
+              type: 'input',
+              name: 'app_path',
+              message: 'Enter Application path'
+          }
+      ]
+      return await inquirer.prompt(questions)
+    },
+    capture_db: async () => {
+        let questions = [
+            {
+                type: 'input',
+                name: 'db_name',
+                message: 'Enter Database name'
+            },
+            {
+                type: 'list',
+                name: 'dialect',
+                message: 'Choose dialect',
+                choices: ['mysql', 'postgresql', 'mssql', 'mongoDB']
+            }
+        ]
         return await inquirer.prompt(questions)
     },
-
     capture_all_tables: async() => {
         let confirm = false
         let tables = []
