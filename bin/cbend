@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 
 const program = require('commander');
+const structure = require('./utils/structure')
+const database = require('./utils/database')
 const mkdirp = require('mkdirp');
 const os = require('os');
 const fs = require('fs');
@@ -21,18 +23,18 @@ process.exit = exit
 // CLI
 
 before(program, 'outputHelp', function () {
-    this.allowUnknownOption();
+  this.allowUnknownOption();
 });
 
 program
-    .version(version)
-    .usage('[options] [dir]')
-    .option('    --git', 'add .gitignore')
-    .option('-f, --force', 'force on non-empty directory')
-    .parse(process.argv);
+  .version(version)
+  .usage('[options] [dir]')
+  .option('    --git', 'add .gitignore')
+  .option('-f, --force', 'force on non-empty directory')
+  .parse(process.argv);
 
 if (!exit.exited) {
-    main();
+  main();
 }
 
 /**
@@ -40,12 +42,12 @@ if (!exit.exited) {
  */
 
 function before(obj, method, fn) {
-    var old = obj[method];
+  var old = obj[method];
 
-    obj[method] = function () {
-        fn.call(this);
-        old.apply(this, arguments);
-    };
+  obj[method] = function () {
+    fn.call(this);
+    old.apply(this, arguments);
+  };
 }
 
 
@@ -53,19 +55,24 @@ function before(obj, method, fn) {
  * Create application at the given directory `path`.
  *
  */
+async function createApplication() {
 
-async function createApplication () {
+  // data capturing
+  let app = await prompt.capture_app_details()
+  let db = await prompt.capture_db()
+  let tables = await prompt.capture_all_tables()
+  let associations = await prompt.capture_all_associations(tables)
 
-    // data capturing
-    let app = await prompt.capture_app_details()
-    let db = await prompt.capture_db()
-    let tables = await prompt.capture_all_tables()
-    let associations = await prompt.capture_all_associations(tables)
+  // link associations to tables
+  tables = structure.link_tables_associations(tables, associations)
 
-    // db creation
-    console.log(db)
-    console.log(tables)
-    console.log(associations)
+  // db creation
+
+
+
+  console.log(db)
+  console.log(tables)
+  console.log(associations)
 }
 
 
@@ -74,22 +81,22 @@ async function createApplication () {
  */
 
 function exit(code) {
-    function done() {
-        if (!(draining--)) _exit(code);
-    }
+  function done() {
+    if (!(draining--)) _exit(code);
+  }
 
-    let draining = 0;
-    let streams = [process.stdout, process.stderr];
+  let draining = 0;
+  let streams = [process.stdout, process.stderr];
 
-    exit.exited = true;
+  exit.exited = true;
 
-    streams.forEach(function(stream){
-        // submit empty write request and wait for completion
-        draining += 1;
-        stream.write('', done);
-    });
+  streams.forEach(function (stream) {
+    // submit empty write request and wait for completion
+    draining += 1;
+    stream.write('', done);
+  });
 
-    done();
+  done();
 }
 
 /**
@@ -97,26 +104,26 @@ function exit(code) {
  */
 
 async function main() {
-    // Path
-    let destinationPath = program.args.shift() || '.';
-    // App name
-    let appName = path.basename(path.resolve(destinationPath));
+  // Path
+  let destinationPath = program.args.shift() || '.';
+  // App name
+  let appName = path.basename(path.resolve(destinationPath));
 
 
-    // Generate application
-    let is_empty_dir = await u_struct.check_for_empty_directory(destinationPath)
-    if (is_empty_dir || program.force) {
-        createApplication(appName, destinationPath);
+  // Generate application
+  let is_empty_dir = await u_struct.check_for_empty_directory(destinationPath)
+  if (is_empty_dir || program.force) {
+    createApplication(appName, destinationPath);
+  } else {
+    let ok = prompt.confirm('WARNING - destination is not empty, continue? [y/N] ')
+    if (ok) {
+      process.stdin.destroy();
+      createApplication(appName, destinationPath);
     } else {
-        let ok = prompt.confirm('WARNING - destination is not empty, continue? [y/N] ')
-        if (ok) {
-            process.stdin.destroy();
-            createApplication(appName, destinationPath);
-        } else {
-            console.error('aborting');
-            exit(1);
-        }
+      console.error('aborting');
+      exit(1);
     }
+  }
 
 
 }
