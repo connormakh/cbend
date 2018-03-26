@@ -71,23 +71,23 @@ module.exports = {
       switch (ass.type) {
         case "hasOne":
           if(tables[index].associations) {
-            tables[index].associations.push(ass.parent)
+            tables[index].associations.push({name:ass.parent, is_nullable: ass.is_nullable})
           } else {
-            tables[index].associations = [ass.parent]
+            tables[index].associations = [{name:ass.parent, is_nullable: ass.is_nullable}]
           }
           break
         case "hasMany":
           if(tables[index].associations) {
-            tables[index].associations.push(ass.parent)
+            tables[index].associations.push({name:ass.parent, is_nullable: ass.is_nullable})
           } else {
-            tables[index].associations = [ass.parent]
+            tables[index].associations = [{name:ass.parent, is_nullable: ass.is_nullable}]
           }
           break
         case "belongsTo":
           if(tables[index].associations) {
-            tables[index].associations.push(ass.child)
+            tables[index].associations.push({name:ass.child, is_nullable: ass.is_nullable})
           } else {
-            tables[index].associations = [ass.child]
+            tables[index].associations = [{name:ass.child, is_nullable: ass.is_nullable}]
           }
           break
       }

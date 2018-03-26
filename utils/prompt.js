@@ -180,7 +180,16 @@ const qs = {
         name: 'type',
         message: 'Choose type of association',
         choices: ['hasOne', 'hasMany', 'belongsTo']
-      }
+      },
+      {
+        type: 'list',
+        name: 'is_nullable',
+        message: 'Can it be null?',
+        choices: ['yes', 'no'],
+        filter: (val) => {
+          return val === 'yes'
+        }
+      },
     ]
     return await inquirer.prompt(questions)
   }

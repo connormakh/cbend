@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 const program = require('commander');
-const structure = require('./utils/structure')
-const database = require('./utils/database')
+const structure = require('../utils/structure')
+const database = require('../utils/database')
 const mkdirp = require('mkdirp');
 const os = require('os');
 const fs = require('fs');
@@ -67,12 +67,8 @@ async function createApplication() {
   tables = structure.link_tables_associations(tables, associations)
 
   // db creation
+  database.initialize(db, tables)
 
-
-
-  console.log(db)
-  console.log(tables)
-  console.log(associations)
 }
 
 
