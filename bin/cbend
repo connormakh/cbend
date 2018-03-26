@@ -57,7 +57,8 @@ function before(obj, method, fn) {
  */
 async function createApplication() {
 
-  // data capturing
+
+
   let app = await prompt.capture_app_details()
   let db = await prompt.capture_db()
   let tables = await prompt.capture_all_tables()
