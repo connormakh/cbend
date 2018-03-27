@@ -16,10 +16,10 @@
     "commander": "2.7.1",
     "inquirer": "^5.1.0",
     "mkdirp": "0.5.1",
-    "mysql2": "^1.5.3",
     "readline-sync": "^1.4.9",
     "require": "^2.4.20",
-    "sorted-object": "1.0.0"
+    "sorted-object": "1.0.0",
+    "sql-formatter": "^2.2.0"
   },
   "author": "Connor Makhlouta <connormakhlouta@gmail.com>",
   "license": "MIT"

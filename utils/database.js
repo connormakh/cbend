@@ -1,6 +1,7 @@
 const mysql = require('mysql2')
   ,   exec = require('child_process').exec
   ,   fs = require('fs')
+  ,   sqlf = require('sql-formatter')
 
 const database = module.exports = {
 
@@ -12,7 +13,7 @@ const database = module.exports = {
   initialize: async (db, tables) => {
 
     try {
-      fs.writeFileSync("schema.sql", database.generate_sql(db, tables))
+      fs.writeFileSync("schema.sql", sqlf.format(database.generate_sql(db, tables)))
     } catch (e) {
       console.log(e)
     }
@@ -45,9 +46,9 @@ const database = module.exports = {
    */
   generate_sql: (db, tables) => {
     let sql_string =
-      "SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;" +
-      "SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS; SET FOREIGN_KEY_CHECKS=0;" +
-      "SET @OLD_SQL_MODE=@@SQL_MODE; SET SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';" +
+      // "SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;" +
+      // "SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS; SET FOREIGN_KEY_CHECKS=0;" +
+      // "SET @OLD_SQL_MODE=@@SQL_MODE; SET SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';" +
       `DROP SCHEMA IF EXISTS \`${db.db_name}\` ; CREATE SCHEMA IF NOT EXISTS \`${db.db_name}\`;` +
       `USE \`${db.db_name}\`\n;`
     for (let table of tables) {
