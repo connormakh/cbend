@@ -1,3 +1,6 @@
+const mysql = require('mysql2')
+  ,   exec = require('child_process').exec
+  ,   fs = require('fs')
 
 const database = module.exports = {
 
@@ -7,17 +10,32 @@ const database = module.exports = {
    * @returns {Promise.<void>}
    */
   initialize: async (db, tables) => {
-    const con = mysql.createConnection({
-      host: 'localhost',
-      user: 'root',
-      password: ''
-    });
-    await con.connect()
-    await con.query(`CREATE DATABASE ${db.db_name};`)
-    con.query(database.generate_sql(db, tables), (err, result) => {
+
+    try {
+      fs.writeFileSync("schema.sql", database.generate_sql(db, tables))
+    } catch (e) {
+      console.log(e)
+    }
+
+    exec("mysql -u root < schema.sql", (err, stdout, stderr) => {
       console.log(err)
-      console.log(result)
+      console.log(stdout)
+      console.log(stderr)
     })
+    // const con = mysql.createConnection({
+    //   host: 'localhost',
+    //   user: 'root',
+    //   password: ''
+    // });
+    // await con.connect()
+    //
+    // await con.query(`CREATE DATABASE ${db.db_name};`)
+    // // con.config.ConnectionConfig.database = db.db_name;
+    // console.log(database.generate_sql(db, tables))
+    // con.query(database.generate_sql(db, tables), (err, result) => {
+    //   console.log(err)
+    //   console.log(result)
+    // })
   },
 
 
@@ -30,14 +48,13 @@ const database = module.exports = {
       "SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;" +
       "SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS; SET FOREIGN_KEY_CHECKS=0;" +
       "SET @OLD_SQL_MODE=@@SQL_MODE; SET SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';" +
-      `DROP SCHEMA IF EXISTS \`${db.db_name}\` ; CREATE SCHEMA IF NOT EXISTS \`${db.db_name}\`; USE \`${db.db_name}\` ;`
-
+      `DROP SCHEMA IF EXISTS \`${db.db_name}\` ; CREATE SCHEMA IF NOT EXISTS \`${db.db_name}\`;` +
+      `USE \`${db.db_name}\`\n;`
     for (let table of tables) {
-      let table_sql = `DROP TABLE IF EXISTS  \`${db.db_name}\`.\`${table.name}\` ;
-                        CREATE TABLE IF NOT EXISTS \`${db.db_name}\`.\`${table.name}\` (
+      let table_sql = `DROP TABLE IF EXISTS  \`${db.db_name}\`.\`${table.name}\` ;CREATE TABLE IF NOT EXISTS \`${db.db_name}\`.\`${table.name}\` (
                         \`id\` INT NOT NULL AUTO_INCREMENT, `
       for (let prop of table.properties) {
-        table_sql += `\`${prop.property_name}\` ${prop.type + (prop.size ? '(' + prop.size + ')' : '')} ${prop.is_nullable ? 'NULL' : 'NOT NULL'} ${prop.default ? 'DEFAULT ' + "'" + prop.default + "'" : ''},`
+        table_sql += `\`${prop.property_name}\` ${prop.type + (prop.size ? '(' + prop.size + ')' : '')} ${prop.is_nullable ? 'NULL' : 'NOT NULL'} ${prop.default ? 'DEFAULT ' + "'" + prop.default + "'" : ''},\n\t`
       }
       table_sql += `PRIMARY KEY (\`id\`)`
 
@@ -56,11 +73,7 @@ const database = module.exports = {
 
         // constraints
         for (let ass of table.associations) {
-          table_sql += `CONSTRAINT \`${table.name}_${ass.name}_id\`
-                            FOREIGN KEY (\`${ass.name}_id\`)
-                            REFERENCES \`${db.db_name}\`.\`${ass.name}\` (\`id\`)
-                            ON DELETE NO ACTION
-                            ON UPDATE NO ACTION,`
+          table_sql += `CONSTRAINT \`${table.name}_${ass.name}_id\` FOREIGN KEY (\`${ass.name}_id\`) REFERENCES \`${db.db_name}\`.\`${ass.name}\` (\`id\`) ON DELETE NO ACTION ON UPDATE NO ACTION,`
         }
         table_sql = table_sql.slice(0, -1) // remove last trailing comma
       }
@@ -68,7 +81,7 @@ const database = module.exports = {
       table_sql += `);`
       sql_string += table_sql
     }
-
+    console.log(sql_string)
     return sql_string
 
 
