@@ -6,8 +6,8 @@ const sortedObject = require('sorted-object');
 
 module.exports = {
 
-  create_project_directory: async (app_name, path) => {
-    const complete_path = path + app_name
+  create_project_directory: async (options) => {
+    const complete_path = options.path +'/'+options.app_name
     await pv.mkdir(complete_path)
 
     await Promise.all([
@@ -45,9 +45,9 @@ module.exports = {
     pkg.dependencies = sortedObject(pkg.dependencies);
 
     // write files
-    pv.write(path + '/package.json', JSON.stringify(pkg, null, 2));
-    pv.write(path + '/app.js', app);
-    pv.mkdir(path + '/bin', function () {
+    pv.write(options.path + '/package.json', JSON.stringify(pkg, null, 2));
+    pv.write(options.path + '/app.js', app);
+    pv.mkdir(options.path + '/bin', function () {
       www = www.replace('{name}', app_name);
       pv.write(path + '/bin/www', www, 0o755);
       complete();
@@ -57,6 +57,13 @@ module.exports = {
       pv.write(path + '/.gitignore', fs.readFileSync(__dirname + '/../templates/js/gitignore', 'utf-8'));
     }
 
+  },
+
+  generate_route: async (options) => {
+
+  },
+
+  generate_lib: (options) => {
 
   },
 
@@ -100,6 +107,7 @@ module.exports = {
 
 const pv = {
   mkdir: async (path) => {
+    console.log("create " + path)
     return await mkdirp(path, 0o755)
   },
   write: (path, str, mode) => {

@@ -21,7 +21,7 @@ module.exports = {
       },
       {
         type: 'input',
-        name: 'app_path',
+        name: 'path',
         message: 'Enter Application path'
       }
     ]
