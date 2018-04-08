@@ -77,7 +77,12 @@ const structure = module.exports = {
   },
 
   generate_env: (options) => {
-    return `DATABASE_MASTER_DATABASE=${options.db.db_name} DATABASE_MASTER_USERNAME=root DATABASE_MASTER_PASSWORD= DATABASE_MASTER_HOST=127.0.0.1 DATABASE_MASTER_PORT=3306 DATABASE_MASTER_DIALECT=${options.db.dialect}`
+    return `DATABASE_MASTER_DATABASE=${options.db.db_name}
+     DATABASE_MASTER_USERNAME=root
+     DATABASE_MASTER_PASSWORD=
+     DATABASE_MASTER_HOST=127.0.0.1
+     DATABASE_MASTER_PORT=3306
+     DATABASE_DIALECT=${options.db.dialect}`
   },
 
   generate_database_file: (associations) => {
