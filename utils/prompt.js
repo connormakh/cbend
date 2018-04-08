@@ -55,7 +55,7 @@ module.exports = {
         type: 'list',
         name: 'confirmation',
         message: 'Would you like to add another table?',
-        choices: ['Yes', 'No']
+        choices: ['No', 'Yes']
       }]
       let answer = await inquirer.prompt(questions)
       confirm = answer.confirmation === 'Yes'
@@ -74,7 +74,7 @@ module.exports = {
         type: 'list',
         name: 'confirmation',
         message: 'Would you like to add another association?',
-        choices: ['Yes', 'No']
+        choices: ['No', 'Yes']
       }]
       let answer = await inquirer.prompt(question)
       confirm = answer.confirmation == 'Yes'
@@ -108,7 +108,7 @@ const qs = {
         type: 'list',
         name: 'is_nullable',
         message: 'Can it be null?',
-        choices: ['yes', 'no'],
+        choices: ['no', 'yes'],
         filter: (val) => {
           return val === 'yes'
         }
@@ -150,7 +150,7 @@ const qs = {
         type: 'list',
         name: 'confirmation',
         message: 'Would you like to add another property?',
-        choices: ['Yes', 'No']
+        choices: ['No','Yes']
       }]
       let answer = await inquirer.prompt(questions)
       confirm = answer.confirmation === 'Yes'
@@ -185,7 +185,7 @@ const qs = {
         type: 'list',
         name: 'is_nullable',
         message: 'Can it be null?',
-        choices: ['yes', 'no'],
+        choices: ['no','yes'],
         filter: (val) => {
           return val === 'yes'
         }

@@ -1,13 +1,18 @@
-const express = require('express');
-const path = require('path');
-const cookieParser = require('cookie-parser');
-const bodyParser = require('body-parser');
-const app = express();
+const express = require('express')
+  ,   bodyParser = require('body-parser')
+  ,   app = express()
+  ,   router = app.Router()
+  ,   routes = require('./routes/index')
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
 
-app.use('/api/v1/users', users);
+router.use('/api', routes)
+
+app.listen(3000, ()=> {
+  console.log('App is listening on port 3000')
+})
+
+// app.use('/api/v1/users', users);
 
 module.exports = app;

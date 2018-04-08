@@ -1,8 +1,8 @@
 {
-  "routes_dir": "/app/routes",
-  "objects_dir": "/app/objects",
-  "helper_dir": "/app/helpers",
+  "routes_dir": "/routes",
+  "objects_dir": "/objects",
+  "helper_dir": "/helpers",
   "utils_dir": "/utils",
-  "models_dir": "/app/models",
+  "models_dir": "/models",
   "initialize_table_creation_prompt": "Would you like to start adding tables?[Y/N]"
 }

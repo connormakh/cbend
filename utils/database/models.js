@@ -15,7 +15,7 @@ const automate = module.exports = {
     let auto = new SequelizeAuto(db.db_name, 'root', '', {
       host: 'localhost',
       dialect: 'mysql',
-      directory: app.path + '/' + app.app_name + '/' + constants.models_dir ,
+      directory: app.path + '/' + app.app_name  + constants.models_dir ,
       port: '3306',
       additional: {
         timestamps: false

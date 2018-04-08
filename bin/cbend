@@ -70,10 +70,10 @@ async function createApplication() {
   tables = structure.link_tables_associations(tables, associations)
 
   // create project structure
-  await structure.create_project_directory(app)
+  await structure.create_project_directory({app:app, db:db, tables:tables, associations:associations})
 
   // db creation
-  await create_database.initialize(db, tables)
+  await create_database.initialize(app, db, tables)
   await models.generate_models(app, db)
 
 

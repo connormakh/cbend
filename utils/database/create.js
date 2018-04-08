@@ -9,10 +9,11 @@ const database = module.exports = {
    * @method initializes sql connection to db, creates db, and populates it with schema
    * @returns {Promise.<void>}
    */
-  initialize: (db, tables) => {
+  initialize: (app, db, tables) => {
 
     try {
-      fs.writeFileSync("schema.sql", sqlf.format(database.generate_sql(db, tables)))
+      fs.writeFileSync(app.path + "/schema.sql", sqlf.format(database.generate_sql(db, tables)))
+      console.log('   \x1b[36mcreate\x1b[0m : ' + app.path + "/schema.sql");
     } catch (e) {
       console.log(e)
     }
@@ -84,7 +85,7 @@ const database = module.exports = {
       table_sql += `);`
       sql_string += table_sql
     }
-    console.log(sql_string)
+    console.log('SQL GENERATION SUCCESSFUL')
     return sql_string
 
 
