@@ -4,9 +4,12 @@ const express = require('express')
   ,   router = require('./routes/index')
   ,   a = require('await-to-js')
   ,   database = require('./utils/database')
+  ,   dotenv = require('dotenv')
+
 
 const api = {
   init: async () => {
+    dotenv.config()
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({ extended: false }));
 

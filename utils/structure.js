@@ -26,6 +26,9 @@ const structure = module.exports = {
     // write gitignore
     pv.write(complete_path + '/.gitignore', pv.loadTemplate('js/gitignore'));
 
+    // write env
+    pv.write(complete_path + '/.env', structure.generate_env(options))
+
     // write app.js
     pv.write(complete_path + '/app.js', pv.loadTemplate('js/app.js'));
 
@@ -47,24 +50,6 @@ const structure = module.exports = {
   },
 
 
-  /**
-   *
-   * @param options.path
-   * @param options.app_name
-   * @param options.tables
-   * @returns {Promise.<void>}
-   */
-  create_project_structure: async(options, paths) => {
-
-    let app = pv.loadTemplate('js/app.js');
-    let www = pv.loadTemplate('js/www');
-    let route_data = pv.loadTemplate('js/routes/route.js');
-
-    if (program.git) {
-      pv.write(path + '/.gitignore', fs.readFileSync(__dirname + '/../templates/js/gitignore', 'utf-8'));
-    }
-  },
-
   generate_package: (app_name) => {
     // package.json
     let pkg = {
@@ -82,12 +67,17 @@ const structure = module.exports = {
         'sequelize-auto-import': '^1.1.0',
         'sequelize-to-json': '^0.10.3',
         'tracer': '^0.8.11',
+        "dotenv": "^4.0.0",
       }
     }
     pkg.dependencies = sortedObject(pkg.dependencies);
 
     return JSON.stringify(pkg, null, 2)
 
+  },
+
+  generate_env: (options) => {
+    return `DATABASE_MASTER_DATABASE=${options.db.db_name} DATABASE_MASTER_USERNAME=root DATABASE_MASTER_PASSWORD= DATABASE_MASTER_HOST=127.0.0.1 DATABASE_MASTER_PORT=3306 DATABASE_MASTER_DIALECT=${options.db.dialect}`
   },
 
   generate_database_file: (associations) => {
