@@ -10,10 +10,10 @@ const database = module.exports = {
    * @method initializes sql connection to db, creates db, and populates it with schema
    * @returns {Promise.<void>}
    */
-  initialize: async (db, tables) => {
+  initialize: async (app, db, tables) => {
 
     try {
-      fs.writeFileSync("schema.sql", sqlf.format(database.generate_sql(db, tables)))
+      fs.writeFileSync(app.path + "/schema.sql", sqlf.format(database.generate_sql(db, tables)))
     } catch (e) {
       console.log(e)
     }
@@ -49,6 +49,9 @@ const database = module.exports = {
       // "SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;" +
       // "SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS; SET FOREIGN_KEY_CHECKS=0;" +
       // "SET @OLD_SQL_MODE=@@SQL_MODE; SET SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';" +
+      "SET SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES'"+
+      'SET UNIQUE_CHECKS=0' +
+      'SET FOREIGN_KEY_CHECKS=0;' +
       `DROP SCHEMA IF EXISTS \`${db.db_name}\` ; CREATE SCHEMA IF NOT EXISTS \`${db.db_name}\`;` +
       `USE \`${db.db_name}\`\n;`
     for (let table of tables) {

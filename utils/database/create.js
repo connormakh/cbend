@@ -49,9 +49,9 @@ const database = module.exports = {
    */
   generate_sql: (db, tables) => {
     let sql_string =
-      // "SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;" +
-      // "SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS; SET FOREIGN_KEY_CHECKS=0;" +
-      // "SET @OLD_SQL_MODE=@@SQL_MODE; SET SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';" +
+      "SET UNIQUE_CHECKS=0;" +
+      "SET FOREIGN_KEY_CHECKS=0;" +
+      "SET SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';" +
       `DROP SCHEMA IF EXISTS \`${db.db_name}\` ; CREATE SCHEMA IF NOT EXISTS \`${db.db_name}\`;` +
       `USE \`${db.db_name}\`\n;`
     for (let table of tables) {
@@ -60,6 +60,7 @@ const database = module.exports = {
       for (let prop of table.properties) {
         table_sql += `\`${prop.property_name}\` ${prop.type + (prop.size ? '(' + prop.size + ')' : '')} ${prop.is_nullable ? 'NULL' : 'NOT NULL'} ${prop.default ? 'DEFAULT ' + "'" + prop.default + "'" : ''},\n\t`
       }
+      table_sql += '`is_deleted` SMALLINT NULL DEFAULT 0,`date_created` TIMESTAMP  DEFAULT CURRENT_TIMESTAMP,`date_modified` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,'
       table_sql += `PRIMARY KEY (\`id\`)`
 
       // check for associations -

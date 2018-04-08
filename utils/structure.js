@@ -16,25 +16,18 @@ const structure = module.exports = {
       pv.mkdir(complete_path + constants.objects_dir),
       pv.mkdir(complete_path + constants.models_dir),
       pv.mkdir(complete_path + constants.utils_dir),
-      pv.mkdir(complete_path + constants.utils_dir + '/hello'),
       pv.mkdir(complete_path + constants.helper_dir),
     ])
 
-    // await structure.create_project_structure(options, {
-    //   app: `${complete_path}/app.js`,
-    //   routes: complete_path + constants.routes_dir,
-    //   objects: complete_path + constants.objects_dir,
-    //   utils: complete_path + constants.utils_dir
-    // })
 
     // write package.json file
     pv.write(complete_path + '/package.json', structure.generate_package(options.app.app_name));
 
+    // write gitignore
+    pv.write(complete_path + '/.gitignore', pv.loadTemplate('js/gitignore'));
 
     // write app.js
     pv.write(complete_path + '/server.js', pv.loadTemplate('js/app.js'));
-    // pv.write(complete_path + '/utils/hello/app.js', pv.loadTemplate('js/app.js'));
-    // pv.write(complete_path + '/app/app.js', pv.loadTemplate('js/app.js'));
 
     // write utils
     pv.write(complete_path + constants.utils_dir + '/database.js', structure.generate_database_file(options.associations));
@@ -48,6 +41,7 @@ const structure = module.exports = {
     structure.generate_objects(options.tables, complete_path + constants.objects_dir)
 
     // write routes
+    structure.generate_routes(options.tables, complete_path + constants.routes_dir)
 
 
   },
@@ -66,18 +60,9 @@ const structure = module.exports = {
     let www = pv.loadTemplate('js/www');
     let route_data = pv.loadTemplate('js/routes/route.js');
 
-
-    // write files
-    pv.mkdir(options.path + '/bin', function () {
-      www = www.replace('{name}', app_name);
-      pv.write(path + '/bin/www', www, 0o755);
-      complete();
-    });
-
     if (program.git) {
       pv.write(path + '/.gitignore', fs.readFileSync(__dirname + '/../templates/js/gitignore', 'utf-8'));
     }
-
   },
 
   generate_package: (app_name) => {
@@ -127,11 +112,19 @@ const structure = module.exports = {
   generate_objects: (tables, objects_path) => {
     let helper_template = pv.loadTemplate('js/objects/object.js')
     for (let table of tables) {
-      pv.write(objects_path+ '/' + table.name+ '.js', helper_template.replace(/\{table_name}/g, table.name))
+      pv.write(objects_path + '/' + table.name + '.js', helper_template.replace(/\{table_name}/g, table.name))
     }
   },
 
-  generate_route: async(options) => {
+  generate_routes: async(tables, routes_path) => {
+    let helper_template = pv.loadTemplate('js/routes/route.js')
+    let index_template = pv.loadTemplate('js/routes/index.js')
+    let index_string = ''
+    for (let table of tables) {
+      pv.write(routes_path + '/' + table.name + '.js', helper_template.replace(/\{table_name}/g, table.name))
+      index_string += '\nrouter.use(\'/' + table.name + '\', require(\'./' + table.name + '\'))'
+    }
+    pv.write(routes_path + '/index.js', index_template.replace(/\{route_imports}/g, index_string))
 
   },
 
@@ -163,16 +156,28 @@ const structure = module.exports = {
           }
           break
         case "belongsTo":
-          if (tables[index].associations) {
-            tables[index].associations.push({name: ass.child, is_nullable: ass.is_nullable})
+          const pindex = tables.findIndex(item => item.name == ass.parent)
+          if (tables[pindex].associations) {
+            tables[pindex].associations.push({name: ass.child, is_nullable: ass.is_nullable})
           } else {
-            tables[index].associations = [{name: ass.child, is_nullable: ass.is_nullable}]
+            tables[pindex].associations = [{name: ass.child, is_nullable: ass.is_nullable}]
           }
           break
       }
     }
     return tables
   },
+
+  backup_answers: (options) => {
+    pv.write('./backup.json', JSON.stringify(options))
+  },
+
+  backup_exists: () => {
+    return fs.existsSync('./backup.json') && fs.readFileSync('./backup.json')
+  },
+  get_backup: () => {
+    return JSON.parse(fs.readFileSync('./backup.json'))
+  }
 
 
 }

@@ -58,23 +58,39 @@ function before(obj, method, fn) {
  */
 async function createApplication() {
 
+  let use_backup = false
+  let options = {}
+  if (structure.backup_exists()) {
+   use_backup = await prompt.ask_for_backup()
+  }
 
-  // database.initialize()
+  if (use_backup) {
+    options = structure.get_backup()
+  } else {
+    // database.initialize()
+    options.app = await prompt.capture_app_details()
+    options.db = await prompt.capture_db()
+    options.tables = await prompt.capture_all_tables()
+    options.associations = await prompt.capture_all_associations(options.tables)
 
-  let app = await prompt.capture_app_details()
-  let db = await prompt.capture_db()
-  let tables = await prompt.capture_all_tables()
-  let associations = await prompt.capture_all_associations(tables)
+    // link associations to tables
+    options.tables = structure.link_tables_associations(options.tables, options.associations)
 
+    // store in backup file
+    structure.backup_answers(options)
+  }
   // link associations to tables
-  tables = structure.link_tables_associations(tables, associations)
+  // options.tables = structure.link_tables_associations(options.tables, options.associations)
+
+  // store in backup file
+  // structure.backup_answers(options)
 
   // create project structure
-  await structure.create_project_directory({app:app, db:db, tables:tables, associations:associations})
+  await structure.create_project_directory(options)
 
   // db creation
-  await create_database.initialize(app, db, tables)
-  await models.generate_models(app, db)
+  await create_database.initialize(options.app, options.db, options.tables)
+  await models.generate_models(options.app, options.db)
 
 
 

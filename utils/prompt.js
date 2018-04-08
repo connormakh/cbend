@@ -12,7 +12,7 @@ module.exports = {
     let input = readline.question(msg)
     return /^y|yes|ok|true$/i.test(input)
   },
-  capture_app_details: async () => {
+  capture_app_details: async() => {
     let questions = [
       {
         type: 'input',
@@ -27,7 +27,7 @@ module.exports = {
     ]
     return await inquirer.prompt(questions)
   },
-  capture_db: async () => {
+  capture_db: async() => {
     let questions = [
       {
         type: 'input',
@@ -43,7 +43,7 @@ module.exports = {
     ]
     return await inquirer.prompt(questions)
   },
-  capture_all_tables: async () => {
+  capture_all_tables: async() => {
     let confirm = false
     let tables = []
     do {
@@ -63,7 +63,7 @@ module.exports = {
 
     return tables
   },
-  capture_all_associations: async (tables) => {
+  capture_all_associations: async(tables) => {
 
     let confirm = false
     let associations = []
@@ -83,11 +83,21 @@ module.exports = {
 
 
     return associations
+  },
+  ask_for_backup: async() => {
+    let question = [{
+      type: 'list',
+      name: 'confirmation',
+      message: 'A backup file was found, would you like to use it?',
+      choices: ['No', 'Yes']
+    }]
+    let answer = await inquirer.prompt(question)
+    return answer.confirmation == 'Yes'
   }
 }
 
 const qs = {
-  ask_for_another_property: async () => {
+  ask_for_another_property: async() => {
 
     let questions = [
       {
@@ -127,7 +137,7 @@ const qs = {
     return answers
     // if(answers)
   },
-  ask_for_another_table: async () => {
+  ask_for_another_table: async() => {
 
     let questions = [
       {
@@ -139,7 +149,7 @@ const qs = {
     return answers.name
 
   },
-  capture_all_properties: async () => {
+  capture_all_properties: async() => {
 
     let confirm = false
     let props = []
@@ -150,7 +160,7 @@ const qs = {
         type: 'list',
         name: 'confirmation',
         message: 'Would you like to add another property?',
-        choices: ['No','Yes']
+        choices: ['No', 'Yes']
       }]
       let answer = await inquirer.prompt(questions)
       confirm = answer.confirmation === 'Yes'
@@ -158,7 +168,7 @@ const qs = {
 
     return props
   },
-  ask_for_another_association: async (tables) => {
+  ask_for_another_association: async(tables) => {
 
     let questions = [
       {
@@ -185,7 +195,7 @@ const qs = {
         type: 'list',
         name: 'is_nullable',
         message: 'Can it be null?',
-        choices: ['no','yes'],
+        choices: ['no', 'yes'],
         filter: (val) => {
           return val === 'yes'
         }
