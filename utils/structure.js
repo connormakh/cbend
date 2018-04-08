@@ -63,6 +63,7 @@ const structure = module.exports = {
         'cookie-parser': '~1.3.5',
         'await-to-js': '^2.0.1',
         'sequelize': '^4.28.6',
+        "mysql2": "^1.5.1",
         'sequelize-auto': '^0.4.29',
         'sequelize-auto-import': '^1.1.0',
         'sequelize-to-json': '^0.10.3',
