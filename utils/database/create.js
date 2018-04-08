@@ -10,16 +10,16 @@ const database = module.exports = {
    * @returns {Promise.<void>}
    */
   initialize: (app, db, tables) => {
-
+    const schema_path = app.path + '/' + app.app_name + '/schema.sql'
     try {
-      fs.writeFileSync(app.path + "/schema.sql", sqlf.format(database.generate_sql(db, tables)))
+      fs.writeFileSync(schema_path , sqlf.format(database.generate_sql(db, tables)))
       console.log('   \x1b[36mcreate\x1b[0m : ' + app.path + "/schema.sql");
     } catch (e) {
       console.log(e)
     }
 
     return new Promise((resolve, reject) => {
-      exec("mysql -u root < schema.sql", (err, stdout, stderr) => {
+      exec("mysql -u root <"+ schema_path , (err, stdout, stderr) => {
         if (err) reject(err)
         if (stderr) reject(stderr)
         resolve(stdout)
