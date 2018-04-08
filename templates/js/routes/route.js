@@ -62,3 +62,5 @@ router.post('/update/:id', async (req, res) => {
     res.status(response.code).send(response);
   }
 });
+
+module.exports = router

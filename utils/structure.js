@@ -27,7 +27,7 @@ const structure = module.exports = {
     pv.write(complete_path + '/.gitignore', pv.loadTemplate('js/gitignore'));
 
     // write app.js
-    pv.write(complete_path + '/server.js', pv.loadTemplate('js/app.js'));
+    pv.write(complete_path + '/app.js', pv.loadTemplate('js/app.js'));
 
     // write utils
     pv.write(complete_path + constants.utils_dir + '/database.js', structure.generate_database_file(options.associations));
