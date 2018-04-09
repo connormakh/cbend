@@ -46,6 +46,9 @@ const structure = module.exports = {
     // write routes
     structure.generate_routes(options.tables, complete_path + constants.routes_dir)
 
+    // write postman dump
+    pv.write(complete_path + '/postman.json',structure.generate_postman_dump(options))
+
 
   },
 
@@ -89,7 +92,7 @@ const structure = module.exports = {
   generate_database_file: (associations) => {
     let associations_string = ''
     for (let ass of associations) {
-      if(ass.type == 'belongsTo') {
+      if (ass.type == 'belongsTo') {
         associations_string += `\ndatabase.get_model(\'${ass.parent}\').${ass.type}(database.get_model(\'${ass.child}\'),{foreignKey:\'${ass.child}_id\'})`
       } else {
         associations_string += `\ndatabase.get_model(\'${ass.parent}\').${ass.type}(database.get_model(\'${ass.child}\'),{foreignKey:\'${ass.parent}_id\'})`
@@ -128,8 +131,50 @@ const structure = module.exports = {
 
   },
 
-  generate_lib: (options) => {
+  generate_postman_dump: (options) => {
+    let postman_dump = {
+      variables: [],
+      info: {
+        name: options.app.app_name,
+        description: '',
+        schema: "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+      },
+      item: []
+    }
+    for (let table of options.tables) {
+      postman_dump.item.push(structure.create_postman_endpoint(table, 'new','POST'))
+      postman_dump.item.push(structure.create_postman_endpoint(table, 'update','POST'))
+      postman_dump.item.push(structure.create_postman_endpoint(table, 'get','GET'))
+      postman_dump.item.push(structure.create_postman_endpoint(table, 'delete','POST'))
+    }
 
+
+    return JSON.stringify(postman_dump)
+  },
+  create_postman_endpoint: (table, type, method) => {
+    let item = {
+      name: `${type} ${table.name}`,
+      request: {
+        url: `{{url}}/api/${table.name}/${type !== 'get' ? type : '1'}`,
+        method: method,
+        header: [],
+        body: {mode: "urlencoded", urlencoded: []},
+        description:""
+      },
+      response: []
+    }
+    if (method == 'POST' && type != 'delete') {
+      item.request.body.urlencoded = table.properties.filter(prop => prop.property_name != 'id' && prop.property_name != 'date_created' && prop.property_name != 'date_modified' && prop.property_name != 'is_deleted')
+        .map(property => {
+          return {key: property.property_name, type: 'text', value: ''}
+        })
+      if(table.associations)
+        for (let ass of table.associations) {
+          item.request.body.urlencoded.push({key: ass.name + "_id", type: 'text', value: ''})
+        }
+    }
+
+    return item
   },
 
   check_for_empty_directory: async(path) => {
