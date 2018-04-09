@@ -22,7 +22,7 @@ const route_control = {
   build_response_params: (response) => {
 
     return {
-      data: response.data ? response.data : response,
+      data: 'data' in response ? response.data : response,
       code: response.code ? response.code : 200,
       message: response.message ? response.message : 'No message specified'
     };
