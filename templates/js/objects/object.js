@@ -23,7 +23,7 @@ const control = module.exports = {
    * @returns {Promise.<void>}
    */
   get: async (id) => {
-    let [err, record] = await a.to(database.get(id))
+    let [err, record] = await a.to(helper.get(id))
     if (err) throw err
 
     return record
@@ -36,7 +36,7 @@ const control = module.exports = {
    * @returns {Promise.<void>}
    */
   update: async (id, options) => {
-    let [err, update_result] = await a.to(database.update(id, options))
+    let [err, update_result] = await a.to(helper.update(id, options))
     if (err) throw err
 
     return update_result
@@ -48,7 +48,7 @@ const control = module.exports = {
    * @returns {Promise.<void>}
    */
   delete: async (id) => {
-    let [err, delete_result] = await a.to(database.delete(id))
+    let [err, delete_result] = await a.to(helper.delete(id))
     if (err) throw err
 
     return delete_result

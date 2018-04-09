@@ -89,7 +89,11 @@ const structure = module.exports = {
   generate_database_file: (associations) => {
     let associations_string = ''
     for (let ass of associations) {
-      associations_string += `\ndatabase.get_model(\'${ass.parent}\').${ass.type}(database.get_model(\'${ass.child}\'))`
+      if(ass.type == 'belongsTo') {
+        associations_string += `\ndatabase.get_model(\'${ass.parent}\').${ass.type}(database.get_model(\'${ass.child}\'),{foreignKey:\'${ass.child}_id\'})`
+      } else {
+        associations_string += `\ndatabase.get_model(\'${ass.parent}\').${ass.type}(database.get_model(\'${ass.child}\'),{foreignKey:\'${ass.parent}_id\'})`
+      }
     }
     let db_file = pv.loadTemplate('js/utils/database.js')
 
